@@ -1,0 +1,14 @@
+path: C:\Users\emanuele.antonini\Documents\Sistema-di-Analisi-e-Classificazione-Documentale-Intelligente-OCR-LLM-\GarbageDetectionv8iyolov8
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['garbage']
+
+roboflow:
+  workspace: garbage-detection-zgdc2
+  project: garbage-detection-pbcjq
+  version: 8
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/garbage-detection-zgdc2/garbage-detection-pbcjq/dataset/8
