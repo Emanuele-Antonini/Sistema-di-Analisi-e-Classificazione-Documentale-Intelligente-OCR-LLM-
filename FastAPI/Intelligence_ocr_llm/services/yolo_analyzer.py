@@ -16,7 +16,7 @@ def __init__(self):
 
     self.modello = YOLO("/models/yolov10x_best.pt")
 
-async def 
+async def analyze(self, data_ocr:dict) -> List[dict]:
 
 # model = YOLO("yolo26n.yaml")
 
