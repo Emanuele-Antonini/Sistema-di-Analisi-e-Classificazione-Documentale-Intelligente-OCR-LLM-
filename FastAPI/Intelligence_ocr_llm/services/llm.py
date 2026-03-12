@@ -29,22 +29,22 @@ class LLMAnalyzer:
 # come 'categoria' e 'sommario', che rappresentano le informazioni chiave restituite dall'analisi LLM. Questo rende il codice più leggibile, 
 # manutenibile e facilita l'integrazione con altre parti del sistema che si aspettano un output strutturato.
 
-  async def analyze(self, data_ocr: dict) -> LLMAnalyzerServices:
-     
-      system_prompt = ("Sei un analista documentale esperto. Il tuo compito è ricevere il testo "
-            "estratto da un sistema OCR (organizzato in blocchi spaziali da YOLO) "
-            "e comprenderne il significato profondo. "
-            "Estrai le informazioni richieste attenendoti rigorosamente ai fatti presenti nel testo.")
+    async def analyze(self, data_ocr: dict) -> LLMAnalyzerServices:
+        
+        system_prompt = ("Sei un analista documentale esperto. Il tuo compito è ricevere il testo "
+              "estratto da un sistema OCR (organizzato in blocchi spaziali da YOLO) "
+              "e comprenderne il significato profondo. "
+              "Estrai le informazioni richieste attenendoti rigorosamente ai fatti presenti nel testo.")
 
-      dati_input_str = json.dumps(data_ocr, indent=2)
-   
-      result = await self.client.beta.chat.completions.parse(model=self.modello,
-                                                       messages=[
-                                                           { "role:" "system", "content": system_prompt},
-                                                           {  "role": "user", "content": f"Ecco i dati estratti dal documento:\n\n{dati_input_str}"} 
-                                                           ],
-                                                       response_format=LLMAnalyzerServices)
+        dati_input_str = json.dumps(data_ocr, indent=2)
+        
+        result = await self.client.beta.chat.completions.parse(model=self.modello,
+                                                         messages=[
+                                                             {"role": "system", "content": system_prompt},
+                                                             {"role": "user", "content": f"Ecco i dati estratti dal documento:\n\n{dati_input_str}"} 
+                                                             ],
+                                                         response_format=LLMAnalyzerServices)
 
-      structure = result.choices[0].message.parsed
+        structure = result.choices[0].message.parsed
 
-      return structure
+        return structure
