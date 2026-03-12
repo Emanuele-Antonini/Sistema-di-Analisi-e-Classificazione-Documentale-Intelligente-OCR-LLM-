@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 import fitz
 
+import numpy as np
+
 # This code defines an abstract base class called DocumentExtractor which allow to implement different document extraction methods.
 # It implemnts the pattenr GOF Strategy, which allows to define a family of method and algorithms, encapsulate each of them and make 
 # them interchangeable.
@@ -29,7 +31,7 @@ class ImageDocumentExtractor(DocumentExtractor):
 
         document = fitz.open(content_byte, filetype="png")
 
-        for page in len(document):
+        for page in range(len(document)):
             
            pagina= document.load_page(page)
 
@@ -37,9 +39,13 @@ class ImageDocumentExtractor(DocumentExtractor):
 
            pix_map = pagina.get_pixmap(matrix=matrix, alpha=False)
 
-           image_in_byte = pix_map.tobytes("png")
+           image_matrix_rgb = np.frombuffer(pix_map.samples, dtype=np.uint8).reshape(pix_map.h, pix_map.w, pix_map.n)
 
-           image_extracted.append(image_in_byte)
+           image_extracted.append(image_matrix_rgb)
+           
+           #image_in_byte = pix_map.tobytes("png")
+
+           #image_extracted.append(image_in_byte)
 
         document = fitz.close()
 
