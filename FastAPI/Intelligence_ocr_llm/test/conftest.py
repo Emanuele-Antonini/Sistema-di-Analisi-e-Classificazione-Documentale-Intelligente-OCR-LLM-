@@ -4,21 +4,31 @@
 # specifci implementando la libreria python test e assicurandosi che la progettazione e l'architettazione del codice siano modulari e rispettino i principi 
 # SOLID e GOF.
 
+# implementiamo in questo caso il pattern Simple Factory pattern creazionale, questo perché è necessario chiamare il metodo implementato in questo file
+# all'interno delle classi di test, in talm modo verrà effettuato un solo istanziamento quando necessario, e verrà, pertanto, impostata una logica di 
+# istanziazione centralizzata, di oggetti complessi.
+
 import pytest
-from services.extractor import ImageDocumentExtractor
+
 import numpy as np
 
-@pytest.mark.asyncio
+# Implemento la classe per la generazione dei documenti di test, e per la traduzione in raw byte del pdf dummy.
 
-async def test_extraction(data):
+class DataFactory:
 
-    # Simulazione di un file PDF o immagine da estrarre
-    file_path = "test_document.pdf"  # Sostituisci con un percorso reale o un mock
+  @staticmethod
+  
+  def generatedata(altezza=800, larghezza=600):
 
-    extractor = ImageDocumentExtractor()
+    # Genera una finta pagina PDF rasterizzata (matrice NumPy RGB)
 
-    result = await extractor.extract(file_path)
+    return np.zeros((altezza, larghezza, 3), dtype=np.uint8) 
 
-    assert "text" in result  # Verifica che il risultato contenga il testo estratto
-    assert isinstance(result["text"], str)  # Verifica che il testo sia una stringa
-    assert len(result) > 0  # Verifica che il testo estratto non sia vuoto
+
+# Utilizzando questo blocco: @pytest.fixture si implementa il pattern Injection Dependency
+
+@pytest.fixture
+
+def datafactory():
+
+    return DataFactory()
