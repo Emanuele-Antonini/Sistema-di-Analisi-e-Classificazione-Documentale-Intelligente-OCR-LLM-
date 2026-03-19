@@ -50,6 +50,11 @@ async  def lifespan(app: FastAPI):
         
         # Qui posso implementare i servizi dell'adapter
         
+    except DuplicateKeyError as e:
+        
+        print(f"Errore appartenente al dominio semantico {e}")
+        
+    
     finally:
 
       # eseguo l'operazione sempre e comunque
