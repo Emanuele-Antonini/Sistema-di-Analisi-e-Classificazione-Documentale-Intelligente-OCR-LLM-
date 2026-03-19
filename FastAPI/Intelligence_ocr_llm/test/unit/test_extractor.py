@@ -7,6 +7,36 @@ import json
 
 # pattern architetturale dei test unitari AAA (Arrange, Act, Assert)
 
+# The name of test methods must express the function implemented in the logic of the test, and also the variabiles and classes
+
+# It's essential to distinguish between two object: value object and entity object secondo il Domain Driven Design
+
+# Value Object definito esclusivamente dai dati che contine e non possiede un'identità persistente nel tempo, sono tipi immutabili
+
+# Entity è un oggetto che possiede un'identità propria che persiste nel tempo anche se i suoi attributi cambiano, viene identificata da un 
+# riferimento unico 
+# 
+# (ID, matricola, reference)
+
+# Ignorazna della persistenza disaccopiamento 
+
+# I concetti astratti quando si implementa un'applicazione non possono essere incapsulati all'interno di un'etità o di un oggetto valore
+
+# Se è necessario implmentare una funzionalità che coinvolge più ogggetti del dominio si utlizza il pattern Domain Service
+
+# DIP Decoupling tra la logica astratta di funzionamento e infrastruttura tecnica
+
+# TDD garantire correttezza e guidare il design verso la testabilità
+
+# La logica centrale, e perciò il fulcro  del funzionamento dell'applicazione, in questo caso la cartella services deve seguire 
+# il principio di "persistence-ignorant", ovvero che non sappia nulla di coeme i dati vengono salvati e in modo tale che si possa 
+# effettuare un refactoring aggressivo
+
+# Uno degli obiettivi è l'utilizzo della classe Repository che è un' interfaccia, un'astrazione utilizzata per scollegare 
+# l'utilizzo del database che è permanente e persistente dal modello del dominio, e dalle sue classi implementate. Si andrà a 
+# creare un adapter che implementa effettivamente le funzionalità di interrogazione del databse.
+
+
 @pytest.mark.asyncio
 
 async def test_extraction():
