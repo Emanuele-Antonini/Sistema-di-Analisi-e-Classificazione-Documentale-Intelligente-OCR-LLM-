@@ -1,5 +1,6 @@
-from motor.motor_asyncio import AsyncIOMotorClient
+# Questo lo posso togliere ora
 
+from motor.motor_asyncio import AsyncIOMotorClient
 from db.connection import db 
 
 DATABASE_NAME="database_name"

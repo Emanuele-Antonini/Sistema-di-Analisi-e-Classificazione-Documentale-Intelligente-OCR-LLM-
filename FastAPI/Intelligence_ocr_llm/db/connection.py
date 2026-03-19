@@ -9,7 +9,7 @@ class DataBase:
 
 db = DataBase()     
        
-async def connet_to_database():
+async def connect_to_database():
     
      uri = "mongodb://localhost:27017/mydatabase"
      db.client = AsyncIOMotorClient(uri)

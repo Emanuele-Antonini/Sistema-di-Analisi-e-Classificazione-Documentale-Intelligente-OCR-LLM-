@@ -8,7 +8,9 @@ import fitz
 
 from api.router_api import router as router_api_router
 
-from db.connection import connet_to_database, close_connection_to_database
+from db.connection import db,connect_to_database, close_connection_to_database
+
+from mongo_adapter import MongoRepository
 
 class Item(BaseModel):
 
@@ -34,15 +36,28 @@ async  def lifespan(app: FastAPI):
     # Code to run on startup
     print("Starting up...")
 
-    await connet_to_database()
+    await connect_to_database()
 
     yield
     # Starting Database connection
 
-    # Code to run on shutdown
-    print("Shutting down...")
+    try:
+        
+       mongo_db = db.client["database_name"] 
+        
+        # 3. Passi il db al repository (Dependency Injection)
+       user_repo = MongoRepository(database=mongo_db, collection_name="collection_name")
+        
+        # Qui posso implementare i servizi dell'adapter
+        
+    finally:
 
-    await close_connection_to_database()
+      # eseguo l'operazione sempre e comunque
+      
+      # Code to run on shutdown
+      print("Starting Shutting down...")
+
+      await close_connection_to_database()
 
 
 app = FastAPI(lifespan=lifespan)
