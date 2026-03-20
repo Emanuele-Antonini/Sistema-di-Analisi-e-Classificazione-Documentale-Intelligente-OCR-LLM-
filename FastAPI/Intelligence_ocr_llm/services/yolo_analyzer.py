@@ -11,6 +11,9 @@ from ultralytics import YOLO
 from ultralytics.utils.callbacks import get_default_callbacks
  
 # this service implements the model developed by IBM named DocLayNet. It contains a dataset of 8000 document images with 11 classes of layout elements.
+# Agisce come un Domain Service
+
+class YoloAnalyzer:
 
 def __init__(self):
 

@@ -1,5 +1,12 @@
 # Sistema-di-Analisi-e-Classificazione-Documentale-Intelligente-OCR-LLM-
 
+# L'intera applicazione è stata implementata utilizzando il Service Layer livello di orchestrazione dei casi d'uso, questo modello si 
+# interpone esattamente a metà tra l'API web e il modello del dominio.
+# Viene implementata la separazione delle responsabilità, l'applicazione FastApi si occupa solo della gestione delle responsabilità legate
+# al web.
+# Si evitano Test End to End, vengono utlizzati test unitari veloci. Livello di orchestrazione e dei casi d'uso. 
+# Domain Service implementa solo la logica core dell'intero progetto. Vengono definiti tutti i casi d'uso dell'applicazione.
+
 <div align="center">
    <h3>🛠️ Tecnologie e Strumenti</h3>
 <p>

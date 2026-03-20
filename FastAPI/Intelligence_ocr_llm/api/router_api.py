@@ -1,16 +1,22 @@
-from fastapi import APIRouter, File, UploadFile 
+from fastapi import APIRouter, File, UploadFile, HTTPException
 
 from pydantic import BaseModel
 
-from db.queries_api import do_insert, do_find, do_update
+#from db.queries_api import do_insert, do_find, do_update
+
+from db.mongo_adapter import MongoRepository
 
 from services.extractor import ExtractorFacotry
 
-from services.yolo_callback import 
+from layer import services_layer
 
-from services.llm import 
 
 # Separation of Concerns: the code is separated into different files based on their functionality.
+
+# Devo applicare il pattern Service Layer in modo tale che il router_api.py non si occupi della
+
+# chiamata di metodi specifici relativi a mongo_adapter, quindi all'interazione con il database e
+# e le operazioni implmentate dai file services.\   
 
 router = APIRouter()
 
@@ -63,6 +69,8 @@ async def test_database_connection():
     
     # Here you can add the code to test the database connection using the do_find() function.
      
+    db = MongoRepository(database_name="mydatabase", collection_name="document_layouts")
+     
     dati_finti = {
         "nome_file": "fattura_spese_2023.pdf",
         "tipologia": "Fattura",
@@ -71,7 +79,7 @@ async def test_database_connection():
     } 
 
 
-    nuovoid = await do_insert(dati_finti)
+    nuovoid = await db.add(dati_finti)
 
     return {
         "message": "Database connection tested successfully", 
@@ -89,18 +97,28 @@ async def insert_document( file: UploadFile = File(...)):
        
        raw_byte = await file.read()
 
-      #implementation of the factory pattern to create an istance of the extractor based on the file type
+    db = MongoRepository(database_name="mydatabase", collection_name="document_layouts")
+    
+    try:
+
+        result = await process_and_save_document()
+    
+    except ValueError as e:
+    
+       raise HTTPException(status_code=500, detail=str(e))
+
+    #   #implementation of the factory pattern to create an istance of the extractor based on the file type
      
-       try :
-            extractor =  ExtractorFacotry.create_extractor("pdf")
+    #    try :
+    #         extractor =  ExtractorFacotry.create_extractor("pdf")
 
-       except ValueError as e:
-            return {"error": str(e)}
+    #    except ValueError as e:
+    #         return {"error": str(e)}
 
-       raw_text = extractor.extract(stream=raw_byte, filetype="pdf")
+    #    raw_text = extractor.extract(stream=raw_byte, filetype="pdf")
 
-       #"id_assegnato": nuovo_id,"title": document.title, "content": document.content, "description": document.description
-       return {"messaggio": "Document inserted successfully", "file_name": file.filename, "file_size": len(raw_byte), "file_type": file.content_type}
+    #    #"id_assegnato": nuovo_id,"title": document.title, "content": document.content, "description": document.description
+    #    return {"messaggio": "Document inserted successfully", "file_name": file.filename, "file_size": len(raw_byte), "file_type": file.content_type}
 
 @router.get("/documents/{document_id}")
 
