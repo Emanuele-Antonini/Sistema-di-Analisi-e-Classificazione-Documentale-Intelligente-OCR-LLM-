@@ -25,7 +25,7 @@ sequenceDiagram
     O-->>R: Layout + Text (JSON)
     R->>LLM: async analyze(JSON Payload)
     LLM-->>R: LLMAnalyzerServices Object
-''c
+'''
 
 
 # Sistema-di-Analisi-e-Classificazione-Documentale-Intelligente-OCR-LLM-
