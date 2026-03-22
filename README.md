@@ -63,31 +63,3 @@ sequenceDiagram
 </div>
 
 
-
-
-# Architettura del Sistema di Elaborazione Documentale
-
-Questo progetto implementa una pipeline asincrona ad alte prestazioni per l'analisi dei documenti, unendo l'estrazione in RAM (PyMuPDF), la visione spaziale (YOLOv10x), la lettura ottica (OpenCV + Tesseract) e l'intelligenza semantica (OpenAI GPT-4o-mini).
-
-## Flusso Operativo (Pipeline)
-
-Di seguito è rappresentato il diagramma di sequenza dell'intero iter processuale:
-
-```mermaid
-sequenceDiagram
-    participant C as Client
-    participant R as FastAPI Router
-    participant F as ExtractorFactory
-    participant Y as YOLO Vision
-    participant O as OCRReader
-    participant LLM as OpenAI (GPT-4o-mini)
-
-    C->>R: POST /analyze (File Bytes)
-    R->>F: extract(bytes)
-    F-->>R: List[NumPy Arrays]
-    R->>Y: predict(NumPy Arrays)
-    Y-->>R: Layout Mapping (BBoxes)
-    R->>O: read_text(NumPy Arrays, BBoxes)
-    O-->>R: Layout + Text (JSON)
-    R->>LLM: async analyze(JSON Payload)
-    LLM-->>R: LLMAnalyzerServices Object
