@@ -1,11 +1,7 @@
 
-# Architettura del Sistema di Elaborazione Documentale
+# Architettura del Sistema di Elaborazione Documentale. Questo progetto implementa una pipeline asincrona ad alte prestazioni per l'analisi dei documenti, unendo l'estrazione in RAM (PyMuPDF), la visione spaziale (YOLOv10x), la lettura ottica (OpenCV + Tesseract) e l'intelligenza semantica (OpenAI GPT-4o-mini).
 
-Questo progetto implementa una pipeline asincrona ad alte prestazioni per l'analisi dei documenti, unendo l'estrazione in RAM (PyMuPDF), la visione spaziale (YOLOv10x), la lettura ottica (OpenCV + Tesseract) e l'intelligenza semantica (OpenAI GPT-4o-mini).
-
-## Flusso Operativo (Pipeline)
-
-Di seguito è rappresentato il diagramma di sequenza dell'intero iter processuale:
+## Flusso Operativo (Pipeline) Di seguito è rappresentato il diagramma di sequenza dell'intero iter processuale:
 
 <!DOCTYPE html>
 <html lang="it">
