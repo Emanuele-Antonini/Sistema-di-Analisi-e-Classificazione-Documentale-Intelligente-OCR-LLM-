@@ -1,14 +1,13 @@
-path: C:\Users\emanuele.antonini\Documents\Sistema-di-Analisi-e-Classificazione-Documentale-Intelligente-OCR-LLM-\GarbageDetectionv8iyolov8
 train: ../train/images
 val: ../valid/images
 test: ../test/images
 
-nc: 1
-names: ['garbage']
+nc: 15
+names: ['customer_address', 'customer_name', 'due_date', 'invoice_date', 'invoice_number', 'invoice_subtotal', 'invoice_total', 'item_description', 'item_quantity', 'item_total_price', 'item_unit_price', 'supplier_address', 'supplier_name', 'tax_amount', 'tax_rate']
 
 roboflow:
-  workspace: garbage-detection-zgdc2
-  project: garbage-detection-pbcjq
+  workspace: haythem-w862r
+  project: invoices-8dkem
   version: 8
   license: CC BY 4.0
-  url: https://universe.roboflow.com/garbage-detection-zgdc2/garbage-detection-pbcjq/dataset/8
+  url: https://universe.roboflow.com/haythem-w862r/invoices-8dkem/dataset/8

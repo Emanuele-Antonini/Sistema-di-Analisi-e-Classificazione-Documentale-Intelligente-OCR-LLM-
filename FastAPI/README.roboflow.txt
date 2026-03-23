@@ -1,8 +1,8 @@
 
-Garbage Detection - v8 2025-06-16 10:30pm
+invoices - v8 2025-07-16 12:34am
 ==============================
 
-This dataset was exported via roboflow.com on June 18, 2025 at 9:27 AM GMT
+This dataset was exported via roboflow.com on March 23, 2026 at 3:21 PM GMT
 
 Roboflow is an end-to-end computer vision platform that helps you
 * collaborate with your team on computer vision projects
@@ -17,13 +17,14 @@ visit https://github.com/roboflow/notebooks
 
 To find over 100k other datasets and pre-trained models, visit https://universe.roboflow.com
 
-The dataset includes 5777 images.
-Objects are annotated in YOLOv8 format.
+The dataset includes 340 images.
+Objects are annotated in YOLOv11 format.
 
 The following pre-processing was applied to each image:
 * Auto-orientation of pixel data (with EXIF-orientation stripping)
 * Resize to 640x640 (Stretch)
 
-No image augmentation techniques were applied.
+The following augmentation was applied to create 2 versions of each source image:
+* Random rotation of between -2 and +2 degrees
 
 

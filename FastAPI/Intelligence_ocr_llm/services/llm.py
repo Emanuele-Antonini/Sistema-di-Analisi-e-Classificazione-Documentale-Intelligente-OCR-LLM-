@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from openai import AsyncOpenAI
+from openapi import AsyncOpenAI
 
 import json
 

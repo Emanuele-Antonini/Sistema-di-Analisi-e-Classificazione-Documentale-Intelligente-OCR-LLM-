@@ -1,64 +1,75 @@
 from abc import ABC, abstractmethod
-
 import fitz
-
 import numpy as np
+from typing import List, Dict, Any
 
-# This code defines an abstract base class called DocumentExtractor which allow to implement different document extraction methods.
-# It implemnts the pattenr GOF Strategy, which allows to define a family of method and algorithms, encapsulate each of them and make 
-# them interchangeable.
-
+# Interfaccia unificata per la strategia
 class DocumentExtractor(ABC):
     @abstractmethod
-    def extract(self, file_path: str) -> dict:
+    def extract_batch(self, file_buffers: List[bytes]) -> List[Dict[str, Any]]:
+        """
+        Elabora una lista di documenti in formato byte e restituisce i dati estratti.
+        L'output è standardizzato in una lista di dizionari.
+        """
         pass
 
-
 class PDFDocumentExtractor(DocumentExtractor):
-    def extract(self, file_path: str) -> dict:
-        # Implementation of text xtraction from a PDF using PyMuPDF
-        document = fitz.open(file_path)
-        text = ""
-        for page in document:
-            text += page.get_text()
-        return {"text": text}
+    def extract_batch(self, file_buffers: List[bytes]) -> List[Dict[str, Any]]:
+        results = []
+        
+        for buffer in file_buffers:
+            # Usiamo 'with' (Context Manager) per chiudere automaticamente il documento e liberare la RAM
+            with fitz.open(stream=buffer, filetype="pdf") as document:
+                # Estrazione rapida del testo usando list comprehension
+                text = "".join([page.get_text() for page in document])
+                results.append({
+                    "status": "success",
+                    "type": "pdf", 
+                    "extracted_data": text
+                })
+                
+        return results
     
 
 class ImageDocumentExtractor(DocumentExtractor):
-    def extract(self, content_byte: bytes):
-
-        image_extracted = []
-
-        document = fitz.open(content_byte, filetype="png")
-
-        for page in range(len(document)):
+    def extract_batch(self, file_buffers: List[bytes]) -> List[Dict[str, Any]]:
+        results = []
+        
+        for buffer in file_buffers:
+            image_extracted = []
             
-           pagina= document.load_page(page)
-
-           matrix = fitz.Matrix(2,2)
-
-           pix_map = pagina.get_pixmap(matrix=matrix, alpha=False)
-
-           image_matrix_rgb = np.frombuffer(pix_map.samples, dtype=np.uint8).reshape(pix_map.h, pix_map.w, pix_map.n)
-
-           image_extracted.append(image_matrix_rgb)
-           
-           #image_in_byte = pix_map.tobytes("png")
-
-           #image_extracted.append(image_in_byte)
-
-        document = fitz.close()
-
-        return  image_extracted
+            # Apertura del buffer in RAM. Nota: filetype="png" indica a fitz come interpretare il flusso stream
+            with fitz.open(stream=buffer, filetype="png") as document:
+                for page in document:
+                    matrix = fitz.Matrix(2, 2)
+                    pix_map = page.get_pixmap(matrix=matrix, alpha=False)
+                    
+                    # Creazione dell'array NumPy
+                    image_matrix_rgb = np.frombuffer(
+                        pix_map.samples, 
+                        dtype=np.uint8
+                    ).reshape(pix_map.h, pix_map.w, pix_map.n)
+                    
+                    image_extracted.append(image_matrix_rgb)
+            
+            results.append({
+                "status": "success",
+                "type": "image", 
+                "extracted_data": image_extracted
+            })
+            
+        return results
     
 
-class ExtractorFacotry:
+class ExtractorFactory:
     @staticmethod
     def create_extractor(file_type: str) -> DocumentExtractor:
+        # Normalizziamo la stringa in minuscolo per evitare errori di case-sensitivity
+        file_type = file_type.lower()
+        
         if file_type == "pdf":
             return PDFDocumentExtractor()
         elif file_type in ["jpg", "jpeg", "png"]:
             return ImageDocumentExtractor()
         else:
-            raise ValueError(f"Unsupported file type: {file_type}")
-
+            raise ValueError(f"Formato file non supportato: {file_type}")

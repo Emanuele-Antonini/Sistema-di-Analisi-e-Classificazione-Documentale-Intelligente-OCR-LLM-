@@ -1,6 +1,8 @@
+import asyncio
+
 from pydantic import BaseModel
 
-from typing import List
+from typing import List, Any
 
 import numpy as np
 
@@ -15,58 +17,50 @@ from ultralytics.utils.callbacks import get_default_callbacks
 
 class YoloAnalyzer:
 
-def __init__(self):
+        def __init__(self):
 
-    print("Inizializzazione del tensore YOLOv10x in corso...")
-    self.modello = YOLO("/models/yolov10x_best.pt")
+            print("Inizializzazione del tensore YOLOv10x in corso...")
+            self.modello = YOLO("D:\\Sistema-di-Analisi-e-Classificazione-Documentale-Intelligente-OCR-LLM-\\FastAPI\\Intelligence_ocr_llm\\models\\yolov10x_best.pt")
 
-async def analyze(self, dati: np.ndarray) -> List[dict]:
-    
-    prediction = self.modello(dati).track()
-    
-    element_found = []
-    
-    for r in prediction:
+        async def analyze(self, dati: List[np.ndarray]) -> List[dict[str, Any]]:
+                    
+                """
+                Analizza un'immagine (array numpy) e restituisce i bounding box rilevati.
+                Esegue l'inferenza in un thread separato per non bloccare l'event loop asincrono.
+                """
+                risultati = await asyncio.to_thread(self.modello.predict, dati, verbose=False)
         
-          print(r.obb.id) 
-          
-          print("-----------")
-          
-          print(r.mask.xy)
-         
-    for prediction in prediction[0].boxes:
-        
-        affidabilità = float(prediction.conf[0].cpu().numpy())
-        box = prediction.xyxy[0].cpu().numpy()
-        bbox_list = prediction.boxes.xyxy.tolist() #boundign boxes all object
-        class_list = prediction.boxes.cls.int().tolist() #class index all object
-        conf_list = prediction.boxes.conf.tolist() #confidence list all objects
-        track_ids = prediction.boxes.id.int().tolist() #track id all objects
-        mask_list = prediction.xy 
-        
-         
-        for box, cls, tid ,conf in zip(bbox_list,class_list,conf_list,track_ids):
-        
-            print(f"Bounding box: {box}, Class index: {cls},"
-                   f"Track_id: {tid}, Confidence: {conf},"
-                   f"masl_list: {mask_list}")
-        
-        
-        id_class= int(prediction.cls[0].cpu().numpy())
-        label = self.modello.names[id_class]
-        
-        element = {
-            "label": label,
-            "affidabilità": affidabilità,
-            "x1": int(box[0]),
-            "y1": int(box[1]),
-            "x2": int(box[2]),
-            "y2": int(box[3])
-        }
-        
-        element_found.append(element)
-      
-    return element_found
+                batch_results = []
+                
+                # Iteriamo sui risultati, tenendo traccia dell'indice dell'immagine (pagina)
+                for page_index, result in enumerate(risultati):
+                    page_elements = []
+                    
+                    # Estraiamo i box per questa specifica pagina
+                    for box_data in result.boxes:
+                        box_coords = box_data.xyxy[0].cpu().numpy()
+                        affidabilita = float(box_data.conf[0].cpu().numpy())
+                        id_class = int(box_data.cls[0].cpu().numpy())
+                        label = self.modello.names[id_class]
+                        
+                        element = {
+                            "label": label,
+                            "affidabilita": round(affidabilita, 4),
+                            "x1": int(box_coords[0]),
+                            "y1": int(box_coords[1]),
+                            "x2": int(box_coords[2]),
+                            "y2": int(box_coords[3])
+                        }
+                        page_elements.append(element)
+                    
+                    # Strutturiamo l'oggetto finale per mantenere il contesto della pagina
+                    batch_results.append({
+                        "page_index": page_index,
+                        "elements_found": len(page_elements),
+                        "elements": page_elements
+                    })
+                    
+                return batch_results
     
     
      
