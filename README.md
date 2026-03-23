@@ -3,104 +3,37 @@
 
 ## Flusso Operativo (Pipeline) Di seguito è rappresentato il diagramma di sequenza dell'intero iter processuale:
 
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagramma Pipeline AI</title>
-    <!-- Importiamo il motore grafico di Mermaid direttamente dal web -->
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
-    <script>
-        // Inizializziamo il motore grafico specificando un tema elegante
-        mermaid.initialize({ 
-            startOnLoad: true, 
-            theme: 'default',
-            sequence: { showSequenceNumbers: true }
-        });
-    </script>
-    <!-- Un po' di stile per rendere la pagina elegante -->
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f3f4f6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            max-width: 900px;
-            width: 100%;
-        }
-        h2 {
-            text-align: center;
-            color: #1f2937;
-            margin-bottom: 30px;
-            font-weight: 600;
-        }
-        .testo-descrittivo {
-            color: #4b5563;
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-            line-height: 1.6;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant R as FastAPI Router
+    participant F as ExtractorFactory
+    participant Y as YOLO Vision
+    participant O as OCRReader
+    participant LLM as OpenAI (GPT-4o-mini)
 
-    <div class="container">
-        <h2>Flusso Operativo: Pipeline di Analisi Documentale</h2>
-        <p class="testo-descrittivo">
-            Ecco la rappresentazione visiva del codice Mermaid. <br>
-            Ogni freccia rappresenta un passaggio di dati in RAM all'interno del tuo server FastAPI.
-        </p>
-        
-        <!-- Questo è il blocco esatto che tu vedevi come testo. 
-             La classe "mermaid" dice allo script in alto di disegnarlo! -->
-        <div class="mermaid">
-            sequenceDiagram
-                participant C as Client
-                participant R as FastAPI Router
-                participant F as ExtractorFactory
-                participant Y as YOLO Vision
-                participant O as OCRReader
-                participant LLM as OpenAI (GPT-4o-mini)
+    C->>R: POST /analyze (File Bytes)
+    
+    rect rgb(240, 248, 255)
+    note right of R: Fase 1: Ingestione e Memoria
+    R->>F: extract(bytes)
+    F-->>R: List[NumPy Arrays]
+    end
 
-                C->>R: POST /analyze (File Bytes)
-                
-                rect rgb(240, 248, 255)
-                note right of R: Fase 1: Ingestione e Memoria
-                R->>F: extract(bytes)
-                F-->>R: List[NumPy Arrays]
-                end
+    rect rgb(255, 245, 238)
+    note right of R: Fase 2 & 3: Visione e Lettura
+    R->>Y: predict(NumPy Arrays)
+    Y-->>R: Layout Mapping (BBoxes)
+    R->>O: read_text(NumPy Arrays, BBoxes)
+    O-->>R: Layout + Text (JSON)
+    end
 
-                rect rgb(255, 245, 238)
-                note right of R: Fase 2 & 3: Visione e Lettura
-                R->>Y: predict(NumPy Arrays)
-                Y-->>R: Layout Mapping (BBoxes)
-                R->>O: read_text(NumPy Arrays, BBoxes)
-                O-->>R: Layout + Text (JSON)
-                end
-
-                rect rgb(240, 255, 240)
-                note right of R: Fase 4: Astrazione Semantica
-                R->>LLM: async analyze(JSON Payload)
-                LLM-->>R: LLMAnalyzerServices Object
-                end
-        </div>
-    </div>
-
-</body>
-</html>
-
+    rect rgb(240, 255, 240)
+    note right of R: Fase 4: Astrazione Semantica
+    R->>LLM: async analyze(JSON Payload)
+    LLM-->>R: LLMAnalyzerServices Object
+    end
+```
 # Sistema-di-Analisi-e-Classificazione-Documentale-Intelligente-OCR-LLM-
 
 # L'intera applicazione è stata implementata utilizzando il Service Layer livello di orchestrazione dei casi d'uso, questo modello si 
