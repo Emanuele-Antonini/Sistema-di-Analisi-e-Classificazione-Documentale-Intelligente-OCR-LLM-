@@ -3,7 +3,7 @@ import asyncio
 import numpy as np
 from services.yolo_analyzer import YoloAnalyzer
 from services.extractor import ExtractorFactory
-
+from services.ocr_reader import OCRReader
 from pathlib import Path
 from typing import List
 
@@ -59,6 +59,8 @@ async def analyze_documents(file_path: str, type_file: str):
 
    yolo_results = []
 
+   ocr_reader = OCRReader()
+
     # Iteriamo direttamente sulla lista delle 29 immagini
    for page_index, immagine_originale in enumerate(immagini_per_yolo):
         
@@ -101,8 +103,23 @@ async def analyze_documents(file_path: str, type_file: str):
         
         # Chiude la finestra corrente prima di passare alla pagina successiva
         cv2.destroyWindow(nome_finestra)
+        
+        result = await ocr_reader.read_text(immagine_bgr, risultato_pagina)
+        
+        for elemento in result:
+                etichetta = elemento["label"]
+                testo = elemento["testo_estratto"]
+                
+                # Stampiamo solo se Tesseract ha effettivamente trovato del testo
+                if testo: 
+                    print(f"[{etichetta.upper()}] -> {testo}")
 
         print("\nAnalisi e visualizzazione di tutte le pagine completata!")
+
+        #analyze(,)
+
+
+
 
 if __name__ == "__main__":
    
