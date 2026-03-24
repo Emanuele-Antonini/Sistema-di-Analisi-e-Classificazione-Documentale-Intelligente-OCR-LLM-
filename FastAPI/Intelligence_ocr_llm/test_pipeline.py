@@ -104,15 +104,15 @@ async def analyze_documents(file_path: str, type_file: str):
         # Chiude la finestra corrente prima di passare alla pagina successiva
         cv2.destroyWindow(nome_finestra)
         
-        result = await ocr_reader.read_text(immagine_bgr, risultato_pagina)
+        result = await ocr_reader.read_text(immagine_bgr, risultato_corrente[0]["elements"])
         
         for elemento in result:
-                etichetta = elemento["label"]
-                testo = elemento["testo_estratto"]
+                #etichetta = elemento["label"]
+                #testo = elemento["testo_estratto"]
                 
                 # Stampiamo solo se Tesseract ha effettivamente trovato del testo
-                if testo: 
-                    print(f"[{etichetta.upper()}] -> {testo}")
+                #if testo: 
+                    print(f"{elemento}")
 
         print("\nAnalisi e visualizzazione di tutte le pagine completata!")
 
