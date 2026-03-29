@@ -4,6 +4,7 @@ import numpy as np
 from services.yolo_analyzer import YoloAnalyzer
 from services.extractor import ExtractorFactory
 from services.ocr_reader import OCRReader
+from services.llm import LLMAnalyzer
 from pathlib import Path
 from typing import List
 
@@ -15,7 +16,8 @@ async def analyze_documents(file_path: str, type_file: str):
    extractor = factory.create_extractor(type_file)
 
    yolo = YoloAnalyzer() 
-
+   llm_analyzer = LLMAnalyzer(api_key)
+                              
    #with open (file_path, "rb") as file_list:
         
    documents = Path(file_path)
@@ -116,9 +118,11 @@ async def analyze_documents(file_path: str, type_file: str):
 
         print("\nAnalisi e visualizzazione di tutte le pagine completata!")
 
+        llm_result = await llm_analyzer.analyze(result)
+
         #analyze(,)
 
-
+        print(f"\n-- Result for page {llm_result}")
 
 
 if __name__ == "__main__":
